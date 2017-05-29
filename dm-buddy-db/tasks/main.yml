@@ -1,0 +1,54 @@
+---
+# Install PostgreSQL
+
+     - name: POSTGRESQL | Check Postgres has been installed
+       stat: path=/etc/postgresql
+       register: postgres_exists
+ 
+     - name: POSTGRESQL | Install postgres
+       become: yes
+       apt:
+         pkg: "{{ item }}"
+         state: latest
+       with_items:
+         - postgresql
+         - postgresql-contrib
+         - libpq-dev
+         - python-psycopg2
+       register: postgresinstalled
+              
+     - name: POSTGRES | Add postgres config
+       become: yes
+       when: postgresinstalled|success
+       template: src=pg_hba.conf dest=/etc/postgresql/9.5/main owner=root group=root
+
+     - name: POSTGRES | Add databases
+       when: postgresinstalled|success
+       become: yes
+       become_user: postgres
+       postgresql_db:
+          name: "{{db_name}}"
+
+     - name: Python | Installing pip and dev
+       become: yes
+       apt:
+         pkg: "{{ item }}"
+         state: latest
+       with_items:
+         - python-pip
+         - python-dev
+
+     - name: pip | Updating pip
+       become: yes
+       pip:
+         name: pip
+         extra_args: --upgrade
+
+     - name: DATABASE | Copying Initialization files
+       copy: src={{db_file}} dest="{{install_directory}}" 
+
+     - name: DATABASE | Install Dependencies
+       pip:
+         requirements: "{{db_requirements_file}}"
+         
+

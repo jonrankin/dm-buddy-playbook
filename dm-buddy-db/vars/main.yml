@@ -1,0 +1,10 @@
+---
+install_directory: ~/dm-buddy-install/
+db_file: database
+db_requirements_file: "{{ install_directory }}{{db_file}}/requirements.txt"
+db_username: postgres
+db_hostname: localhost 
+db_name: dm-buddy
+db_env:
+    DATABASE_URI : "postgresql://{{db_username}}:@{{db_hostname}}/"
+    DATABASE_NAME: "{{db_name}}"
