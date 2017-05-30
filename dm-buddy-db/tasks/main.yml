@@ -18,9 +18,10 @@
        register: postgresinstalled
               
      - name: POSTGRES | Add postgres config
-       become: yes
+       become: true
+       become_method: su
        when: postgresinstalled|success
-       template: src=pg_hba.conf dest=/etc/postgresql/9.5/main owner=root group=root
+       template: src=pg_hba.conf dest=/etc/postgresql/9.5/main
 
      - name: POSTGRES | Add databases
        when: postgresinstalled|success
