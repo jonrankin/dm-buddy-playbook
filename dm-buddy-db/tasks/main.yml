@@ -52,5 +52,8 @@
        become: true
        pip:
          requirements: "{{db_requirements_file}}"
-         
+
+     - name: DATABASE | Initialize
+       become: true
+       command: "python {{install_directory}}database/main.py"         
 
