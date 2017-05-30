@@ -21,6 +21,7 @@
        when: postgresinstalled|success
        become: true
        template: src=pg_hba.conf dest=/etc/postgresql/9.5/main/
+       notify: restart postgresql
 
      - name: POSTGRES | Add databases
        when: postgresinstalled|success
