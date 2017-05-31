@@ -18,6 +18,9 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     last_login =  db.Column(db.DateTime, nullable=True)
+    streams = db.relationship('Stream', backref='user',
+                                lazy='dynamic')
+
 
     def __init__(self, email, username, password, admin=False):
         self.email = email
@@ -92,3 +95,41 @@ class BlacklistToken(db.Model):
             return True
         else:
             return False
+
+
+class Stream(db.Model):
+    """ Model for storing Stream related details. """
+    __tablename__ = "streams"
+
+    stream_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    stream_name = db.Column(db.VARCHAR(12), unique=True, nullable=False)
+    stream_desc = db.Column(db.String(255), nullable=True)
+    date_added = db.Column(db.DateTime, nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'))
+    questions = db.relationship('Question', backref='stream',
+                                lazy='dynamic')
+
+    def __init__(self, stream_name, created_by, stream_desc=""):
+        self.stream_name = stream_name
+        self.stream_desc = stream_desc
+        self.created_by = created_by
+        self.date_added = datetime.datetime.now()
+
+class Question(db.Model):
+    """ Model for storing Question related details. """
+    __tablename__ = "questions"
+
+    question_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    question_name = db.Column(db.VARCHAR(12), unique=True, nullable=False)
+    question_data = db.Column(db.JSON, nullable=True)
+    date_added = db.Column(db.DateTime, nullable=False)
+    stream_id = db.Column(db.Integer, db.ForeignKey('streams.stream_id'))
+    created_by = db.Column(db.Integer, unique=False, nullable=False)
+
+    def __init__(self, stream_name, stream_desc, stream_id, created_by):
+        self.question_name = stream_name
+        self.question_desc = stream_desc
+        self.created_by = created_by
+        self.stream_id = stream_id
+        self.date_added = datetime.datetime.now()
+
