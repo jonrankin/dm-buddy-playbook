@@ -33,7 +33,10 @@
        become: yes
        become_user: postgres
        postgresql_db:
-          name: "{{db_name}}"
+          name: "{{ item }}"
+       with_items:
+         - "{{db_name}}"
+         - "{{db_name}}_test"
 
      - name: Python | Installing pip and dev
        become: true
@@ -61,5 +64,5 @@
 
      - name: DATABASE | Initialize
        become: true
-       command: "python {{install_directory}}database/main.py"         
+       command: "python {{install_directory}}database/create_tables.py"         
 

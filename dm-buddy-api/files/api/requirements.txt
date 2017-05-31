@@ -7,7 +7,6 @@ chardet==2.3.0
 crcmod==1.7
 cryptography==1.5
 enum34==1.1.6
-google-compute-engine==2.2.4
 httplib2==0.9.1
 idna==2.1
 ipaddress==1.0.16
@@ -28,3 +27,10 @@ requests==2.10.0
 six==1.10.0
 SQLAlchemy==1.1.4
 urllib3==1.15.1
+Flask==0.12
+Flask-Bcrypt==0.7.1
+Flask-Migrate==2.0.2
+Flask-Script==2.0.5
+Flask-SQLAlchemy==2.1
+Flask-Testing==0.6.1
+coverage==4.2
