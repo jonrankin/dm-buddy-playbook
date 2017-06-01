@@ -1,3 +1,5 @@
+# api/tests/test_auth.py
+
 import unittest
 
 from api import db
@@ -261,5 +263,5 @@ class TestAuthBlueprint(BaseTestCase):
         self.assertTrue(data['message'] == 'Token blacklisted. Please log in again.')
         self.assertEqual(response.status_code, 401)
 
-if __name__ == '__main':
+if __name__ == '__main__':
      unittest.main()

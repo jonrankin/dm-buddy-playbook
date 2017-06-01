@@ -102,7 +102,7 @@ class Stream(db.Model):
     __tablename__ = "streams"
 
     stream_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    stream_name = db.Column(db.VARCHAR(12), unique=True, nullable=False)
+    stream_name = db.Column(db.VARCHAR(60), unique=True, nullable=False)
     stream_desc = db.Column(db.String(255), nullable=True)
     date_added = db.Column(db.DateTime, nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('users.id'))

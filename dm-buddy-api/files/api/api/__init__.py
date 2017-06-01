@@ -23,3 +23,5 @@ db = SQLAlchemy(app)
 from api.auth.views import auth_blueprint
 app.register_blueprint(auth_blueprint)
 
+from api.stream.views import stream_blueprint
+app.register_blueprint(stream_blueprint)
