@@ -6,7 +6,7 @@ from flask.views import MethodView
 
 from auth import bcrypt, db
 from auth.db_access.models import User, BlacklistToken
-
+import auth.auth_library
 
 auth_blueprint = Blueprint('auth', __name__)
 
@@ -38,7 +38,7 @@ class RegisterAPI(MethodView):
                     'status': 'success',
                     'message': 'Successfully registered.',
                     'refresh_token': refresh_token.decode(),
-                    'access_token': (user.encode_access_token(user.id)).decode()
+                    'access_token': (User.encode_access_token(user.id)).decode()
                 }
                 return make_response(jsonify(responseObject)), 201
             except Exception as e:
@@ -75,7 +75,7 @@ class LoginAPI(MethodView):
                         'status': 'success',
                         'message': 'Successfully logged in.',
                         'refresh_token': refresh_token.decode(),
-                        'access_token':  (user.encode_access_token(user.id)).decode()
+                        'access_token':  (User.encode_access_token(user.id)).decode()
                     }
                     return make_response(jsonify(responseObject)), 200
             else:
@@ -184,15 +184,36 @@ class RefreshAPI (MethodView):
         if auth_header:
              refresh_token = auth_header.split(" ")[1]
         else:
-             auth_token = ''
+             refresh_token = ''
         if refresh_token:
-            resp = User.decode_refresh_token(refresh_token)
+            resp = User.decode_token(refresh_token, 'refresh')
+            if not isinstance(resp,str):
+                 responseObject ={
+                       'status' : 'success',
+                       'message' : 'successfully created new access token',
+                       'access_token' : (User.encode_access_token(resp['sub'])).decode()
+                 }
+                 return make_response(jsonify(responseObject)), 200
+            else:
+                 responseObject = {
+                       'status': 'fail',
+                       'message': 'Provide a valid auth token.'
+                 }
+                 return make_response(jsonify(responseObject)), 401
+        else:
+           responseObject = {
+              'status': 'fail',
+              'message': 'Provide a valid refresh token.'
+           }
+           return make_response(jsonify(responseObject)), 403
+
 
 # define the API resources
 registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
 user_view = UserAPI.as_view('user_api')
 logout_view = LogoutAPI.as_view('logout_api')
+refresh_view = RefreshAPI.as_view('refresh_api')
 
 # add Rules for API Endpoints
 auth_blueprint.add_url_rule(
@@ -215,3 +236,9 @@ auth_blueprint.add_url_rule(
     view_func=logout_view,
     methods=['POST']
 )
+auth_blueprint.add_url_rule(
+    '/auth/refresh',
+    view_func=refresh_view,
+    methods=['POST']
+)
+

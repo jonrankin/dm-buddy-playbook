@@ -31,7 +31,8 @@ class User(db.Model):
         self.registered_on = datetime.datetime.now()
         self.admin = admin
 
-    def encode_access_token(self, user_id):
+    @staticmethod
+    def encode_access_token(user_id):
         """
         Generates the Access Token
         :return: string
@@ -86,11 +87,10 @@ class User(db.Model):
                  is_blacklisted_token = BlacklistToken.check_blacklist(token)
                  if is_blacklisted_token:
                       return 'Blacklisted'
-            else:
-                return {
+            return {
                         'sub' : payload['sub'],
                         'type' : payload['type']
-                       }
+                   }
         except jwt.ExpiredSignatureError:
             return 'Expired'
         except jwt.InvalidTokenError:

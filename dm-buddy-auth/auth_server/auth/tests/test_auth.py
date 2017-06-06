@@ -123,6 +123,32 @@ class TestAuthBlueprint(BaseTestCase):
         self.assertTrue(response.content_type == 'application/json')
         self.assertEqual(response.status_code, 404)
 
+  def test_refresh_token(self):
+    """ Test for user refresh token to issue new access token """
+    with self.client:
+        # user registration
+        resp_register = register_user(self, 'yuanti', 'yuanti@gmail.com', 'freewifi')
+        data_register = json.loads(resp_register.data.decode())
+        self.assertTrue(data_register['status'] == 'success')
+        self.assertTrue(data_register['access_token'])
+        self.assertTrue(data_register['refresh_token'])
+        self.assertTrue(resp_register.content_type == 'application/json')
+        self.assertEqual(resp_register.status_code, 201)
+
+        #attempt to refresh token
+        response =  self.client.post(
+        '/auth/refresh',
+        headers=dict(
+            Authorization='Bearer ' + json.loads(
+                resp_register.data.decode()
+            )['refresh_token']
+        ),
+        content_type='application/json',
+        )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'success')
+        self.assertTrue(data['access_token'] is not None)
+
   def test_user_status(self):
     """ Test to pull user status """
     with self.client:

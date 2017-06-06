@@ -7,7 +7,6 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 
 
-
 import config as api_config
 
 app = Flask(__name__)
